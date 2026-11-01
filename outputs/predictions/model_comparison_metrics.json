@@ -1,0 +1,74 @@
+{
+  "dataset": "MRL Eye Dataset",
+  "test_samples_evaluated": 3200,
+  "disjoint_test_subjects": [
+    "s0004",
+    "s0006",
+    "s0009",
+    "s0014",
+    "s0024",
+    "s0027"
+  ],
+  "baseline_custom_cnn": {
+    "input_resolution": [
+      64,
+      64,
+      3
+    ],
+    "total_parameters": 101569,
+    "model_file_mb": 1.22,
+    "inference_latency_ms": 8.72,
+    "fps_cpu": 114.6,
+    "metrics": {
+      "accuracy": 0.865625,
+      "precision_macro": 0.8696034344688373,
+      "recall_macro": 0.865625,
+      "f1_score_macro": 0.8652624190644277,
+      "precision_closed": 0.9079497907949791,
+      "recall_closed": 0.81375,
+      "f1_closed": 0.8582729070533949,
+      "confusion_matrix": [
+        [
+          1468,
+          132
+        ],
+        [
+          298,
+          1302
+        ]
+      ],
+      "total_evaluated": 3200
+    }
+  },
+  "mobilenetv2_transfer_learning": {
+    "input_resolution": [
+      96,
+      96,
+      3
+    ],
+    "total_parameters": 2259265,
+    "model_file_mb": 9.2,
+    "inference_latency_ms": 82.14,
+    "fps_cpu": 12.2,
+    "metrics": {
+      "accuracy": 0.7771875,
+      "precision_macro": 0.8453917027139242,
+      "recall_macro": 0.7771875,
+      "f1_score_macro": 0.7656166293029139,
+      "precision_closed": 0.9988751406074241,
+      "recall_closed": 0.555,
+      "f1_closed": 0.7135395741261551,
+      "confusion_matrix": [
+        [
+          1599,
+          1
+        ],
+        [
+          712,
+          888
+        ]
+      ],
+      "total_evaluated": 3200
+    }
+  }
+}

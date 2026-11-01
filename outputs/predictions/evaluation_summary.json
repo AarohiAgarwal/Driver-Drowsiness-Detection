@@ -1,0 +1,32 @@
+{
+  "model_path": "D:\\Projects_Aarohi\\Driver Drowsiness Detection\\models\\eye_model\\best_eye_model.keras",
+  "total_test_samples": 3200,
+  "accuracy": 0.865625,
+  "precision_macro": 0.8696034344688373,
+  "recall_macro": 0.865625,
+  "f1_score_macro": 0.8652624190644277,
+  "per_class_metrics": {
+    "OPEN": {
+      "precision": 0.8312570781426953,
+      "recall": 0.9175,
+      "f1_score": 0.8722519310754605,
+      "support": 1600
+    },
+    "CLOSED": {
+      "precision": 0.9079497907949791,
+      "recall": 0.81375,
+      "f1_score": 0.8582729070533949,
+      "support": 1600
+    }
+  },
+  "confusion_matrix": {
+    "TN_true_open": 1468,
+    "FP_false_closed": 132,
+    "FN_false_open": 298,
+    "TP_true_closed": 1302
+  },
+  "artifacts_generated": {
+    "confusion_matrix_plot": "D:\\Projects_Aarohi\\Driver Drowsiness Detection\\outputs\\confusion_matrix\\eye_model_confusion_matrix_detailed.png",
+    "sample_predictions_plot": "D:\\Projects_Aarohi\\Driver Drowsiness Detection\\outputs\\predictions\\eye_model_sample_predictions.png"
+  }
+}

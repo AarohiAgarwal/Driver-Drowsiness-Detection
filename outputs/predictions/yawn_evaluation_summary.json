@@ -1,0 +1,57 @@
+{
+    "model_path": "D:\\Projects_Aarohi\\Driver Drowsiness Detection\\models\\yawn_model\\best_yawn_model.keras",
+    "total_test_samples": 770,
+    "accuracy": 0.9116883116883117,
+    "precision_macro": 0.9120652878280592,
+    "recall_macro": 0.9119095816464238,
+    "f1_macro": 0.9116859284446873,
+    "per_class": {
+        "NO_YAWN": {
+            "precision": 0.9281914893617021,
+            "recall": 0.8948717948717949,
+            "f1": 0.9112271540469974
+        },
+        "YAWN": {
+            "precision": 0.8959390862944162,
+            "recall": 0.9289473684210526,
+            "f1": 0.9121447028423773
+        }
+    },
+    "confusion_matrix": [
+        [
+            349,
+            41
+        ],
+        [
+            27,
+            353
+        ]
+    ],
+    "classification_report": {
+        "NO_YAWN": {
+            "precision": 0.9281914893617021,
+            "recall": 0.8948717948717949,
+            "f1-score": 0.9112271540469974,
+            "support": 390.0
+        },
+        "YAWN": {
+            "precision": 0.8959390862944162,
+            "recall": 0.9289473684210526,
+            "f1-score": 0.9121447028423773,
+            "support": 380.0
+        },
+        "accuracy": 0.9116883116883117,
+        "macro avg": {
+            "precision": 0.9120652878280592,
+            "recall": 0.9119095816464238,
+            "f1-score": 0.9116859284446873,
+            "support": 770.0
+        },
+        "weighted avg": {
+            "precision": 0.9122747190168078,
+            "recall": 0.9116883116883117,
+            "f1-score": 0.9116799703356264,
+            "support": 770.0
+        }
+    }
+}

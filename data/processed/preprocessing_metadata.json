@@ -1,0 +1,136 @@
+{
+  "pipeline_version": "1.0",
+  "image_size": {
+    "height": 224,
+    "width": 224,
+    "channels": 3
+  },
+  "normalization": {
+    "range": "[0.0, 1.0]",
+    "method": "pixel / 255.0"
+  },
+  "augmentation_policy": {
+    "rotation_range": "[-10, +10] degrees",
+    "zoom_range": "[0.92, 1.08]",
+    "horizontal_flip": "50% probability",
+    "brightness_shift": "[-25, +25] pixel delta",
+    "contrast_range": "[0.85, 1.15]",
+    "vertical_flip": false
+  },
+  "tasks": {
+    "task_1_eye_classification": {
+      "dataset": "MRL Eye Dataset",
+      "leakage_prevention": "Subject-level partitioning (37 subjects split into 25 train, 6 val, 6 test with 0% overlap)",
+      "summary": {
+        "total_samples": 84898,
+        "splits": {
+          "train": {
+            "total": 59118,
+            "classes": {
+              "OPEN": 30185,
+              "CLOSED": 28933
+            }
+          },
+          "val": {
+            "total": 13011,
+            "classes": {
+              "OPEN": 6506,
+              "CLOSED": 6505
+            }
+          },
+          "test": {
+            "total": 12769,
+            "classes": {
+              "CLOSED": 6508,
+              "OPEN": 6261
+            }
+          }
+        },
+        "class_distribution": {
+          "OPEN": 42952,
+          "CLOSED": 41946
+        },
+        "label_encoding": {
+          "OPEN": 0,
+          "CLOSED": 1
+        }
+      }
+    },
+    "task_2_yawn_classification": {
+      "dataset": "Yawn Dataset",
+      "leakage_prevention": "Contiguous temporal block sequence partitioning (prevents consecutive video frame leakage)",
+      "summary": {
+        "total_samples": 5119,
+        "splits": {
+          "train": {
+            "total": 3582,
+            "classes": {
+              "NO_YAWN": 1813,
+              "YAWN": 1769
+            }
+          },
+          "val": {
+            "total": 767,
+            "classes": {
+              "NO_YAWN": 388,
+              "YAWN": 379
+            }
+          },
+          "test": {
+            "total": 770,
+            "classes": {
+              "NO_YAWN": 390,
+              "YAWN": 380
+            }
+          }
+        },
+        "class_distribution": {
+          "NO_YAWN": 2591,
+          "YAWN": 2528
+        },
+        "label_encoding": {
+          "NO_YAWN": 0,
+          "YAWN": 1
+        }
+      }
+    },
+    "task_3_ddd_classification": {
+      "dataset": "Driver Drowsiness Dataset (DDD)",
+      "leakage_prevention": "Subject/Stream letter prefix partitioning (26 subjects split into 18 train, 4 val, 4 test with 0% overlap)",
+      "summary": {
+        "total_samples": 41793,
+        "splits": {
+          "train": {
+            "total": 29428,
+            "classes": {
+              "DROWSY": 15744,
+              "NON_DROWSY": 13684
+            }
+          },
+          "val": {
+            "total": 6012,
+            "classes": {
+              "DROWSY": 3213,
+              "NON_DROWSY": 2799
+            }
+          },
+          "test": {
+            "total": 6353,
+            "classes": {
+              "DROWSY": 3391,
+              "NON_DROWSY": 2962
+            }
+          }
+        },
+        "class_distribution": {
+          "DROWSY": 22348,
+          "NON_DROWSY": 19445
+        },
+        "label_encoding": {
+          "NON_DROWSY": 0,
+          "DROWSY": 1
+        }
+      }
+    }
+  }
+}

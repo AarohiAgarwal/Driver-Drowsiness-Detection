@@ -1,0 +1,135 @@
+{
+    "scenario_1_normal_driving": {
+        "total_frames": 90,
+        "expected_state": "ALERT",
+        "time_in_alert_pct": 100.0,
+        "false_alarms": 0,
+        "avg_drowsiness_score": 0.038391270437516965,
+        "peak_drowsiness_score": 0.16401704545454543,
+        "blinks_recorded": 1,
+        "status": "PASS"
+    },
+    "scenario_2_short_blink": {
+        "blinks_tested": 4,
+        "blink_frames_tested": [
+            2,
+            4,
+            3,
+            5
+        ],
+        "blinks_registered": 4,
+        "alarms_triggered": 0,
+        "non_alert_frames_during_blinks": 0,
+        "status": "PASS"
+    },
+    "scenario_3_prolonged_closure": {
+        "warning_transition_frame": 6,
+        "warning_latency_ms": 200.0,
+        "drowsy_transition_frame": 7,
+        "drowsy_latency_ms": 233.33333333333334,
+        "alarm_triggered": true,
+        "final_drowsiness_score": 0.7965,
+        "status": "PASS"
+    },
+    "scenario_4_repeated_closure": {
+        "baseline_score": 0.0449571428571429,
+        "initial_cycle_peak_score": 0.16401704545454543,
+        "final_cycle_peak_score": 0.6383982067510547,
+        "baseline_perclos_pct": 0.0,
+        "final_perclos_pct": 29.761904761904763,
+        "peak_score_progression": [
+            0.164,
+            0.2747,
+            0.6112,
+            0.6384
+        ],
+        "end_score_progression": [
+            0.0511,
+            0.0575,
+            0.064,
+            0.071
+        ],
+        "score_increased": true,
+        "status": "PASS"
+    },
+    "scenario_5_yawning": {
+        "total_test_samples": 770,
+        "accuracy": 0.9116883116883117,
+        "precision_yawn": 0.8959390862944162,
+        "recall_yawn": 0.9289473684210526,
+        "f1_score_yawn": 0.9121447028423773,
+        "confusion_matrix": [
+            [
+                349,
+                41
+            ],
+            [
+                27,
+                353
+            ]
+        ],
+        "status": "PASS"
+    },
+    "scenario_6_glasses": {
+        "with_glasses": {
+            "accuracy": 0.747,
+            "precision": 0.9164926931106472,
+            "recall": 0.6733128834355828,
+            "f1": 0.7763041556145004
+        },
+        "without_glasses": {
+            "accuracy": 0.905,
+            "precision": 0.9111617312072893,
+            "recall": 0.8771929824561403,
+            "f1": 0.8938547486033519
+        },
+        "accuracy_difference_pct": 15.800000000000002,
+        "status": "PASS"
+    },
+    "scenario_7_poor_lighting": {
+        "poor_lighting": {
+            "accuracy": 0.862,
+            "precision": 0.9082278481012658,
+            "recall": 0.8776758409785933,
+            "f1": 0.8926905132192846
+        },
+        "good_lighting": {
+            "accuracy": 0.857,
+            "precision": 0.9142857142857143,
+            "recall": 0.41739130434782606,
+            "f1": 0.573134328358209
+        },
+        "low_light_detection_preserved": true,
+        "status": "PASS"
+    },
+    "scenario_8_face_leaves_camera": {
+        "faces_detected_when_empty": 0,
+        "no_face_result_detected": false,
+        "alarm_triggered_when_empty": false,
+        "recovered_state_on_return": "ALERT",
+        "status": "PASS"
+    },
+    "scenario_9_multiple_faces": {
+        "policy": "Primary Driver Isolation Strategy: When multiple faces are detected, the system computes a normalized composite priority score based on face bounding box area (2.0 weight) and normalized distance from the optical center axis (-0.5 penalty). The face maximizing this score is locked as the primary driver. Secondary peripheral faces are designated as passengers and ignored.",
+        "total_faces_detected": 2,
+        "primary_face_selected": true,
+        "primary_face_is_larger": true,
+        "status": "PASS"
+    },
+    "scenario_10_camera_failure": {
+        "invalid_camera_index": 999,
+        "cap_opened": false,
+        "fallback_mechanism": "Graceful warning output and self-test verification mode redirection",
+        "crash_prevented": true,
+        "status": "PASS"
+    },
+    "latency_and_throughput": {
+        "iterations": 30,
+        "face_detection_ms": 19.357310000032157,
+        "eye_inference_ms": 14.325739999958387,
+        "mouth_inference_ms": 6.68916666674401,
+        "temporal_engine_ms": 0.08448666668906905,
+        "total_latency_ms": 40.45815333335364,
+        "average_fps": 24.716896783709636
+    }
+}

@@ -1,0 +1,62 @@
+{
+  "model_name": "EyeStateCNN",
+  "task": "Eye State Classification (OPEN vs CLOSED)",
+  "dataset": "MRL Eye Dataset",
+  "architecture": {
+    "input_shape": [
+      64,
+      64,
+      3
+    ],
+    "layers": [
+      "Conv2D(32, 3x3, same) + ReLU",
+      "MaxPooling2D(2x2)",
+      "Conv2D(64, 3x3, same) + ReLU",
+      "MaxPooling2D(2x2)",
+      "Conv2D(128, 3x3, same) + ReLU",
+      "GlobalAveragePooling2D",
+      "Dense(64, relu)",
+      "Dropout(0.4)",
+      "Dense(1, sigmoid)"
+    ],
+    "total_parameters": 100737,
+    "trainable_parameters": 100737
+  },
+  "training_hyperparameters": {
+    "optimizer": "Adam",
+    "loss": "binary_crossentropy",
+    "epochs_trained": 8,
+    "batch_size": 64,
+    "target_resolution": [
+      64,
+      64
+    ]
+  },
+  "final_epoch_metrics": {
+    "train_accuracy": 0.8339375257492065,
+    "val_accuracy": 0.831250011920929,
+    "train_loss": 0.3706488013267517,
+    "val_loss": 0.4691299498081207,
+    "train_precision": 0.8019667863845825,
+    "val_precision": 0.8874269127845764,
+    "train_recall": 0.8868749737739563,
+    "val_recall": 0.7587500214576721
+  },
+  "test_set_evaluation": {
+    "test_accuracy": 0.865625,
+    "test_precision": 0.9079497907949791,
+    "test_recall": 0.81375,
+    "test_f1_score": 0.8582729070533949,
+    "confusion_matrix": [
+      [
+        1468,
+        132
+      ],
+      [
+        298,
+        1302
+      ]
+    ],
+    "total_test_evaluated": 3200
+  }
+}
