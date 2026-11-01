@@ -19,6 +19,20 @@ DDD_DATASET_DIR = DATASET_DIR / "DDD Dataset"
 MRL_DATASET_DIR = DATASET_DIR / "MRL Dataset"
 YAWN_DATASET_DIR = DATASET_DIR / "Yawn Dataset"
 
+# Curated sample dataset paths (tracked in git for immediate out-of-the-box execution)
+SAMPLE_DATASET_DIR = DATA_DIR / "sample_dataset"
+SAMPLE_DDD_DIR = SAMPLE_DATASET_DIR / "DDD Dataset"
+SAMPLE_MRL_DIR = SAMPLE_DATASET_DIR / "MRL Dataset"
+SAMPLE_YAWN_DIR = SAMPLE_DATASET_DIR / "Yawn Dataset"
+
+# Automatic fallback to sample dataset if full dataset is not present
+if not DATASET_DIR.exists() or not any(DATASET_DIR.iterdir()):
+    if SAMPLE_DATASET_DIR.exists():
+        DATASET_DIR = SAMPLE_DATASET_DIR
+        DDD_DATASET_DIR = SAMPLE_DDD_DIR
+        MRL_DATASET_DIR = SAMPLE_MRL_DIR
+        YAWN_DATASET_DIR = SAMPLE_YAWN_DIR
+
 # Model artifacts and output paths
 MODELS_DIR = BASE_DIR / "models"
 EYE_MODEL_DIR = MODELS_DIR / "eye_model"

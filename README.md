@@ -38,16 +38,20 @@ driver_drowsiness_detection/
 
 ## Dataset Overview
 
-| Dataset | Modality | Classes / Splits | Images | Annotations / Metadata |
+The system supports both an **instant curated sample dataset** (included directly in the Git repository) and the **full large-scale datasets** (downloadable from Kaggle):
+
+| Dataset | Modality | Classes / Splits | Full Images | Kaggle Source Link |
 | :--- | :--- | :--- | :--- | :--- |
-| **Driver Drowsiness Dataset (DDD)** | Driver Face/Posture | Drowsy (22,348), Non Drowsy (19,445) | 41,793 | Class folder structure |
-| **MRL Eye Dataset** | Infrared Eye Region | Awake (42,952), Sleepy (41,946) split into train/val/test | 84,898 | `labels.txt`, filename metadata encoding |
-| **Yawn Dataset** | Mouth / Facial Region | no yawn (2,591), yawn (2,528) | 5,119 | Class folder structure |
+| **Driver Drowsiness Dataset (DDD)** | Driver Face/Posture | Drowsy (22,348), Non Drowsy (19,445) | 41,793 | [Kaggle DDD Dataset](https://www.kaggle.com/datasets/ismailnasrummin/driver-drowsiness-dataset-ddd) |
+| **MRL Eye Dataset** | Infrared Eye Region | Awake (42,952), Sleepy (41,946) split into train/val/test | 84,898 | [Kaggle MRL Dataset](https://www.kaggle.com/datasets/dheerajperumandla/drowsiness-dataset) |
+| **Yawn Dataset** | Mouth / Facial Region | no yawn (2,591), yawn (2,528) | 5,119 | [Kaggle Yawn Dataset](https://www.kaggle.com/datasets/vipoooool/yawn-dataset) |
+
+> 💡 **Ready Out-of-the-Box:** A curated sample dataset (~9.2 MB, 440 real images across all classes) is staged in `data/sample_dataset/` and tracked in Git so you can immediately inspect, test, and run the pipeline upon cloning without downloading 2.89 GB. Full download instructions are documented in [data/README.md](data/README.md).
 
 ## Quickstart
 
 ### 1. Inspect Datasets
-To inspect and verify all physically present datasets:
+To inspect and verify datasets (automatically checks `dataset/` or falls back to `data/sample_dataset/`):
 
 ```bash
 python src/inspect_datasets.py
