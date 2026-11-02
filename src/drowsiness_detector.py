@@ -78,9 +78,10 @@ class DrowsinessDetector:
                  blink_max_frames: int = getattr(config, "BLINK_MAX_FRAMES", 6),
                  warning_closed_frames: int = getattr(config, "WARNING_CLOSED_FRAMES", 12),
                  drowsy_closed_frames: int = getattr(config, "DROWSY_CLOSED_FRAMES", 24),
-                 yawn_sustained_frames: int = getattr(config, "YAWN_SUSTAINED_FRAMES", 15),
+                 yawn_sustained_frames: int = getattr(config, "YAWN_SUSTAINED_FRAMES", 12),
+                 yawn_consecutive_frames: int = getattr(config, "YAWN_CONSECUTIVE_FRAMES", 20),
                  ear_closed_threshold: float = getattr(config, "EAR_CLOSED_THRESHOLD", 0.19),
-                 mar_yawn_threshold: float = getattr(config, "MAR_YAWN_THRESHOLD", 0.40),
+                 mar_yawn_threshold: float = getattr(config, "MAR_YAWN_THRESHOLD", 0.38),
                  weight_eye_cnn: float = getattr(config, "WEIGHT_EYE_CNN", 0.35),
                  weight_ear: float = getattr(config, "WEIGHT_EAR", 0.20),
                  weight_yawn: float = getattr(config, "WEIGHT_YAWN", 0.20),
@@ -94,6 +95,7 @@ class DrowsinessDetector:
         self.warning_closed_frames = warning_closed_frames
         self.drowsy_closed_frames = drowsy_closed_frames
         self.yawn_sustained_frames = yawn_sustained_frames
+        self.yawn_consecutive_frames = yawn_consecutive_frames
 
         self.ear_closed_threshold = ear_closed_threshold
         self.mar_yawn_threshold = mar_yawn_threshold
@@ -245,15 +247,22 @@ class DrowsinessDetector:
         yawn_cnn_score = float(raw_yawn_prob) if is_yawn else 0.0
         self.score_yawn = max(yawn_cnn_score, mar_score)
 
-        # Sub-score D: Temporal Duration & PERCLOS (Percentage of Eye Closure)
+        # Sub-score D: Temporal Duration & PERCLOS (Percentage of Eye Closure & Yawning)
         if len(self.history) > 0:
             closed_in_window = sum(1 for item in self.history if item.both_eyes_closed)
             perclos = closed_in_window / float(len(self.history))
+            yawn_in_window = sum(1 for item in self.history if item.is_yawning)
+            yawn_ratio = yawn_in_window / float(len(self.history))
         else:
             perclos = 0.0
+            yawn_ratio = 0.0
 
-        duration_factor = min(1.0, self.consecutive_closed_frames / float(self.drowsy_closed_frames))
-        self.score_temporal = 0.65 * duration_factor + 0.35 * perclos
+        eye_duration_factor = min(1.0, self.consecutive_closed_frames / float(self.drowsy_closed_frames))
+        yawn_duration_factor = min(1.0, self.consecutive_yawn_frames / float(self.yawn_consecutive_frames))
+        duration_factor = max(eye_duration_factor, yawn_duration_factor)
+
+        rolling_fatigue = max(perclos, min(1.0, yawn_ratio * 1.5))
+        self.score_temporal = 0.65 * duration_factor + 0.35 * rolling_fatigue
 
         # 4. Composite Drowsiness Score Fusion
         # Transient blink damping:
@@ -279,10 +288,21 @@ class DrowsinessDetector:
         # 5. Temporal State Machine Transition Logic
         prev_state = self.current_state
 
-        if self.consecutive_closed_frames >= self.drowsy_closed_frames:
+        # Check critical drowsiness triggers (prolonged eye closure OR prolonged yawn OR repeated yawns)
+        is_critical_closure = self.consecutive_closed_frames >= self.drowsy_closed_frames
+        is_critical_yawn = (self.consecutive_yawn_frames >= self.yawn_consecutive_frames) or \
+                           (self.total_yawn_events >= 2 and self.consecutive_yawn_frames >= self.yawn_sustained_frames)
+
+        # Check fatigue warning triggers (warning closure OR sustained yawn)
+        is_warning_closure = self.consecutive_closed_frames >= self.warning_closed_frames
+        is_warning_yawn = self.consecutive_yawn_frames >= self.yawn_sustained_frames
+
+        if is_critical_closure or is_critical_yawn:
             self.current_state = DrowsinessState.DROWSY
-        elif self.consecutive_closed_frames >= self.warning_closed_frames:
+            self.drowsiness_score = max(self.drowsiness_score, self.score_drowsy + 0.10)
+        elif is_warning_closure or is_warning_yawn:
             self.current_state = DrowsinessState.WARNING
+            self.drowsiness_score = max(self.drowsiness_score, self.score_warning + 0.05)
         elif 0 < self.consecutive_closed_frames <= self.blink_max_frames:
             # During active transient blink (1-6 frames): remain ALERT unless rolling PERCLOS or yawning indicates fatigue
             if self.drowsiness_score >= self.score_drowsy:
@@ -298,15 +318,15 @@ class DrowsinessDetector:
             else:
                 self.current_state = DrowsinessState.WARNING
         else:
-            # Eyes are currently OPEN (consecutive_closed_frames == 0)
+            # Eyes are currently OPEN (consecutive_closed_frames == 0) and not actively in sustained yawn
             if self.current_state == DrowsinessState.DROWSY:
-                # Gradual de-escalation: require sustained reopening before clearing DROWSY alert
-                if self.consecutive_open_frames >= 15 and self.drowsiness_score < self.score_warning:
+                # Gradual de-escalation: require sustained reopening and mouth closed before clearing DROWSY alert
+                if self.consecutive_open_frames >= 15 and self.consecutive_yawn_frames == 0 and self.drowsiness_score < self.score_warning:
                     self.current_state = DrowsinessState.ALERT
-                elif self.consecutive_open_frames >= 8 and self.drowsiness_score < self.score_drowsy:
+                elif self.consecutive_open_frames >= 8 and self.consecutive_yawn_frames == 0 and self.drowsiness_score < self.score_drowsy:
                     self.current_state = DrowsinessState.WARNING
             elif self.current_state == DrowsinessState.WARNING:
-                if self.consecutive_open_frames >= 10 and self.drowsiness_score < self.score_warning:
+                if self.consecutive_open_frames >= 10 and self.consecutive_yawn_frames == 0 and self.drowsiness_score < self.score_warning:
                     self.current_state = DrowsinessState.ALERT
             else:
                 # Baseline Alert driver

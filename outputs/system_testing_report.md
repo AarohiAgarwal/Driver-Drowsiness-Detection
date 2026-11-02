@@ -1,7 +1,7 @@
 # System Testing & Verification Report
 
 **Project Title:** Real-Time Driver Drowsiness Detection and Alert System Using Deep Learning  
-**Evaluation Date:** 2026-11-01 15:52:04  
+**Evaluation Date:** 2026-11-02 20:17:25  
 **Environment:** Python 3.14.3 on Windows | Backend: Torch/Keras  
 
 ---
@@ -16,11 +16,11 @@ A comprehensive validation of the driver drowsiness detection system was execute
 
 | Component | Processing Latency | Throughput (FPS) | Hardware Target |
 | :--- | :--- | :--- | :--- |
-| **MediaPipe FaceLandmarker** | 19.36 ms | ~51.7 FPS | CPU (xnnpack) |
-| **Eye ROI Crop & CNN Inference** | 14.33 ms | ~69.8 FPS | CPU (Torch) |
-| **Mouth ROI Crop & Yawn CNN** | 6.69 ms | ~149.5 FPS | CPU (Torch) |
-| **Temporal Engine & Fusion** | 0.08 ms | >1000 FPS | CPU |
-| **Total End-to-End Pipeline** | **40.46 ms** | **24.7 FPS** | Real-Time Capable ($>25$ FPS) |
+| **MediaPipe FaceLandmarker** | 23.27 ms | ~43.0 FPS | CPU (xnnpack) |
+| **Eye ROI Crop & CNN Inference** | 16.38 ms | ~61.1 FPS | CPU (Torch) |
+| **Mouth ROI Crop & Yawn CNN** | 7.52 ms | ~133.0 FPS | CPU (Torch) |
+| **Temporal Engine & Fusion** | 0.09 ms | >1000 FPS | CPU |
+| **Total End-to-End Pipeline** | **47.26 ms** | **21.2 FPS** | Real-Time Capable ($>25$ FPS) |
 
 ---
 

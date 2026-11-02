@@ -139,8 +139,18 @@ class DrowsinessAlarm:
             # Do not launch duplicate concurrent alarms while active
             return False
 
-        # State: ALERT or WARNING -> No new alarm initiated
-        if state in ("ALERT", "WARNING"):
+        # State: ALERT -> No alarm initiated
+        if state == "ALERT":
+            return False
+
+        # State: WARNING -> Emit brief non-blocking warning chime for early fatigue / initial yawn
+        if state == "WARNING":
+            if not self.enabled or self.is_playing:
+                return False
+            last_warn = getattr(self, "_last_warn_chime_time", -999.0)
+            if (now - last_warn) >= 3.5:
+                self._last_warn_chime_time = now
+                threading.Thread(target=self._play_warning_chime, name="WarningChimeWorker", daemon=True).start()
             return False
 
         # State: DROWSY -> Activate Audible Alarm
@@ -286,6 +296,17 @@ class DrowsinessAlarm:
                 alerts_dir / "alert_hi.mp3",
                 alerts_dir / "alert_pa.mp3",
             ]
+
+    def _play_warning_chime(self):
+        """Short non-intrusive audible warning chime for early fatigue / initial yawn."""
+        if HAS_WINSOUND and not self._stop_event.is_set():
+            try:
+                winsound.Beep(1800, 100)
+                time.sleep(0.05)
+                if not self._stop_event.is_set():
+                    winsound.Beep(2200, 120)
+            except Exception:
+                pass
 
     def _alarm_worker(self):
         """

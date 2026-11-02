@@ -315,22 +315,36 @@ def draw_master_hud(frame: np.ndarray,
     cv2.putText(hud_frame, ear_txt, (15, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (200, 200, 200), 1, cv2.LINE_AA)
 
     # --- Column 2: Mouth & Yawn Status ---
+    temp_metrics = decision_results.get("temporal_metrics", {})
+    yawn_frames = temp_metrics.get("consecutive_yawn_frames", 0)
+    yawns_count = temp_metrics.get("total_yawn_events", 0)
+
     m_state = mouth_results.get("state", "NO_YAWN") if mouth_results else "NONE"
     m_conf = mouth_results.get("confidence", 0.0) if mouth_results else 0.0
     mar = mouth_results.get("mar", 0.0) if mouth_results else 0.0
     is_yawn = mouth_results.get("is_yawning", False) if mouth_results else False
-    m_color = (0, 140, 255) if is_yawn else (0, 220, 0)
+    
+    if is_yawn and yawn_frames >= 20:
+        m_color = (0, 0, 255)  # Critical Red
+        yawn_txt = f"Mouth/Yawn: CRITICAL YAWN! ({m_conf:.0f}%)  |  MAR: {mar:.3f}  |  Duration: {yawn_frames}f"
+    elif is_yawn and yawn_frames >= 12:
+        m_color = (0, 140, 255) # Warning Amber
+        yawn_txt = f"Mouth/Yawn: YAWN WARNING ({m_conf:.0f}%)  |  MAR: {mar:.3f}  |  Duration: {yawn_frames}f"
+    elif is_yawn:
+        m_color = (0, 165, 255)
+        yawn_txt = f"Mouth/Yawn: {m_state} ({m_conf:.0f}%)  |  MAR: {mar:.3f}"
+    else:
+        m_color = (0, 220, 0)
+        yawn_txt = f"Mouth/Yawn: {m_state} ({m_conf:.0f}%)  |  MAR: {mar:.3f}"
 
-    yawn_txt = f"Mouth/Yawn: {m_state} ({m_conf:.0f}%)  |  MAR: {mar:.3f}"
     cv2.putText(hud_frame, yawn_txt, (15, 92), cv2.FONT_HERSHEY_SIMPLEX, 0.48, m_color, 1, cv2.LINE_AA)
 
     # --- Row 3: Temporal Stats & Closure Duration ---
-    temp_metrics = decision_results.get("temporal_metrics", {})
     closure_sec = temp_metrics.get("closure_duration_sec", 0.0)
     blinks = temp_metrics.get("total_blinks", 0)
     perclos = temp_metrics.get("perclos", 0.0) * 100.0
 
-    temp_txt = f"Closure: {closure_sec:.1f}s  |  PERCLOS: {perclos:.1f}%  |  Blinks: {blinks}"
+    temp_txt = f"Closure: {closure_sec:.1f}s  |  Yawns: {yawns_count}  |  PERCLOS: {perclos:.1f}%  |  Blinks: {blinks}"
     cv2.putText(hud_frame, temp_txt, (15, 114), cv2.FONT_HERSHEY_SIMPLEX, 0.46, (180, 180, 180), 1, cv2.LINE_AA)
 
     # --- Row 4: Drowsiness Fusion Score Meter Bar ---

@@ -125,11 +125,11 @@
     },
     "latency_and_throughput": {
         "iterations": 30,
-        "face_detection_ms": 19.357310000032157,
-        "eye_inference_ms": 14.325739999958387,
-        "mouth_inference_ms": 6.68916666674401,
-        "temporal_engine_ms": 0.08448666668906905,
-        "total_latency_ms": 40.45815333335364,
-        "average_fps": 24.716896783709636
+        "face_detection_ms": 23.272776666787347,
+        "eye_inference_ms": 16.377639999973326,
+        "mouth_inference_ms": 7.5178833332453605,
+        "temporal_engine_ms": 0.08927333325724855,
+        "total_latency_ms": 47.259130000202276,
+        "average_fps": 21.159932482796865
     }
 }

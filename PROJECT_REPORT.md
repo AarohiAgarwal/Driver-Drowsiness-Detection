@@ -140,8 +140,8 @@ $$S(t) = w_{\text{eye}} \cdot P_{\text{eye}}(t) + w_{\text{ear}} \cdot S_{\text{
 **State Transition Machine:**
 $$\text{Driver State}(t) = \begin{cases} 
 \text{ALERT}, & S(t) < 0.40 \\
-\text{WARNING}, & 0.40 \le S(t) < 0.65 \\
-\text{DROWSY}, & S(t) \ge 0.65 \quad \text{OR} \quad N_{\text{closed}} \ge 24 \text{ frames}
+\text{WARNING}, & (0.40 \le S(t) < 0.65) \quad \text{OR} \quad (N_{\text{closed}} \ge 12 \text{ frames}) \quad \text{OR} \quad (N_{\text{yawn}} \ge 12 \text{ frames}) \\
+\text{DROWSY}, & S(t) \ge 0.65 \quad \text{OR} \quad (N_{\text{closed}} \ge 24 \text{ frames}) \quad \text{OR} \quad (N_{\text{yawn}} \ge 20 \text{ frames})
 \end{cases}$$
 
 ---

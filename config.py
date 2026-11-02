@@ -116,11 +116,11 @@ ROLLING_WINDOW_SIZE = 90          # Rolling frame window for temporal analysis (
 BLINK_MAX_FRAMES = 6              # Maximum consecutive closed frames for a normal blink (~0.2 sec)
 WARNING_CLOSED_FRAMES = 12        # Persistent eye closure frame threshold for WARNING (~0.4 sec)
 DROWSY_CLOSED_FRAMES = 24         # Persistent eye closure frame threshold for DROWSY (~0.8 sec)
-YAWN_SUSTAINED_FRAMES = 15        # Consecutive frames to register a sustained yawn event (~0.5 sec)
+YAWN_SUSTAINED_FRAMES = 12        # Consecutive frames to register a sustained yawn event (~0.4 sec)
 
 # Biometric Baseline Thresholds (Engineering reference values)
 EAR_CLOSED_THRESHOLD = 0.19       # EAR below which eye aperture is physically constrained
-MAR_YAWN_THRESHOLD = 0.40         # MAR above which mouth is excessively opened in yawn posture
+MAR_YAWN_THRESHOLD = 0.38         # MAR above which mouth is excessively opened in yawn posture
 
 # Multi-Signal Drowsiness Score Fusion Weights (Sums to 1.0)
 WEIGHT_EYE_CNN = 0.35             # Deep learning eye classification contribution
