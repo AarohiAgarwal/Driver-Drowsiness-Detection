@@ -75,7 +75,9 @@ class DrowsinessDetector:
     """
     def __init__(self,
                  window_size: int = getattr(config, "ROLLING_WINDOW_SIZE", 90),
+                 blink_min_frames: int = getattr(config, "BLINK_MIN_FRAMES", 2),
                  blink_max_frames: int = getattr(config, "BLINK_MAX_FRAMES", 6),
+                 blink_refractory_sec: float = getattr(config, "BLINK_REFRACTORY_SEC", 0.15),
                  warning_closed_frames: int = getattr(config, "WARNING_CLOSED_FRAMES", 12),
                  drowsy_closed_frames: int = getattr(config, "DROWSY_CLOSED_FRAMES", 24),
                  yawn_sustained_frames: int = getattr(config, "YAWN_SUSTAINED_FRAMES", 12),
@@ -91,7 +93,9 @@ class DrowsinessDetector:
 
         # Configurable engineering parameters
         self.window_size = window_size
+        self.blink_min_frames = blink_min_frames
         self.blink_max_frames = blink_max_frames
+        self.blink_refractory_sec = blink_refractory_sec
         self.warning_closed_frames = warning_closed_frames
         self.drowsy_closed_frames = drowsy_closed_frames
         self.yawn_sustained_frames = yawn_sustained_frames
@@ -132,6 +136,7 @@ class DrowsinessDetector:
 
         # Cumulative Session Metrics
         self.total_blinks = 0
+        self.last_blink_time: float = -999.0
         self.total_yawn_events = 0
         self.session_start_time = time.time()
         self.last_state_change_time = time.time()
@@ -211,9 +216,14 @@ class DrowsinessDetector:
             self.eye_closure_duration_sec = now - (self.closure_start_time or now)
         else:
             # Reopening after closure
-            if 0 < self.consecutive_closed_frames <= self.blink_max_frames:
-                # Registered as a completed normal transient blink!
-                self.total_blinks += 1
+            # Physiological Blink Gate:
+            # A genuine spontaneous human blink takes 100ms - 400ms (2 to 6 frames at 30 fps).
+            # A 1-frame closure (33ms) is camera sensor jitter/noise, NOT a physiological blink.
+            # Require minimum closure duration and refractory period to prevent automatic count inflation.
+            if self.blink_min_frames <= self.consecutive_closed_frames <= self.blink_max_frames:
+                if (now - self.last_blink_time) >= self.blink_refractory_sec:
+                    self.total_blinks += 1
+                    self.last_blink_time = now
             self.consecutive_closed_frames = 0
             self.consecutive_open_frames += 1
             self.eye_closure_duration_sec = 0.0
@@ -233,21 +243,19 @@ class DrowsinessDetector:
         if both_closed:
             self.score_eye_cnn = min(1.0, max(0.5, raw_eye_prob))
         elif l_state == "CLOSED" or r_state == "CLOSED":
-            self.score_eye_cnn = 0.30  # Partial/one-eye closure
+            self.score_eye_cnn = 0.40  # Partial/one-eye closure
         else:
-            self.score_eye_cnn = max(0.0, (raw_eye_prob - 0.40) * 0.5) if raw_eye_prob > 0.40 else 0.0
+            self.score_eye_cnn = max(0.0, raw_eye_prob * 0.3)
 
         # Sub-score B: Continuous Geometric EAR
-        # Scaled between EAR=0.23 (fully alert open eyes) and EAR=0.15 (fully closed)
-        ear_clamped = np.clip(avg_ear, 0.15, 0.23)
-        self.score_ear = float((0.23 - ear_clamped) / (0.23 - 0.15))
+        # Scaled between EAR=0.28 (fully alert) and EAR=0.15 (fully closed)
+        ear_clamped = np.clip(avg_ear, 0.14, 0.28)
+        self.score_ear = float((0.28 - ear_clamped) / (0.28 - 0.14))
 
         # Sub-score C: Yawn CNN & MAR
-        if is_yawn:
-            mar_score = float(np.clip((mar - 0.30) / (0.45 - 0.30), 0.0, 1.0))
-            self.score_yawn = max(float(raw_yawn_prob), mar_score)
-        else:
-            self.score_yawn = 0.0
+        mar_score = float(np.clip((mar - 0.20) / (0.45 - 0.20), 0.0, 1.0))
+        yawn_cnn_score = float(raw_yawn_prob) if is_yawn else 0.0
+        self.score_yawn = max(yawn_cnn_score, mar_score)
 
         # Sub-score D: Temporal Duration & PERCLOS (Percentage of Eye Closure & Yawning)
         if len(self.history) > 0:

@@ -1,7 +1,7 @@
 # System Testing & Verification Report
 
 **Project Title:** Real-Time Driver Drowsiness Detection and Alert System Using Deep Learning  
-**Evaluation Date:** 2026-11-13 18:56:52  
+**Evaluation Date:** 2026-11-13 19:24:48  
 **Environment:** Python 3.14.3 on Windows | Backend: Torch/Keras  
 
 ---
@@ -16,11 +16,11 @@ A comprehensive validation of the driver drowsiness detection system was execute
 
 | Component | Processing Latency | Throughput (FPS) | Hardware Target |
 | :--- | :--- | :--- | :--- |
-| **MediaPipe FaceLandmarker** | 20.59 ms | ~48.6 FPS | CPU (xnnpack) |
-| **Eye ROI Crop & CNN Inference** | 13.89 ms | ~72.0 FPS | CPU (Torch) |
-| **Mouth ROI Crop & Yawn CNN** | 6.50 ms | ~153.7 FPS | CPU (Torch) |
-| **Temporal Engine & Fusion** | 0.07 ms | >1000 FPS | CPU |
-| **Total End-to-End Pipeline** | **41.06 ms** | **24.4 FPS** | Real-Time Capable ($>25$ FPS) |
+| **MediaPipe FaceLandmarker** | 18.49 ms | ~54.1 FPS | CPU (xnnpack) |
+| **Eye ROI Crop & CNN Inference** | 13.35 ms | ~74.9 FPS | CPU (Torch) |
+| **Mouth ROI Crop & Yawn CNN** | 6.41 ms | ~156.1 FPS | CPU (Torch) |
+| **Temporal Engine & Fusion** | 0.08 ms | >1000 FPS | CPU |
+| **Total End-to-End Pipeline** | **38.33 ms** | **26.1 FPS** | Real-Time Capable ($>25$ FPS) |
 
 ---
 
@@ -31,7 +31,7 @@ A comprehensive validation of the driver drowsiness detection system was execute
 - **Expected Outcome:** State strictly maintained as `ALERT`.
 - **Measured Metrics:**
   - Alert State Retention: **100.0%**
-  - Average Drowsiness Score: **0.75%**
+  - Average Drowsiness Score: **3.84%**
   - False Alarms Triggered: **0**
   - Blinks Registered: **1**
 - **Outcome:** **PASSED**
@@ -66,7 +66,7 @@ A comprehensive validation of the driver drowsiness detection system was execute
 - **Description:** Progressive closure cycles with decreasing inter-blink open intervals.
 - **Expected Outcome:** Drowsiness score rises steadily as closure duration and rolling PERCLOS accumulate.
 - **Measured Metrics:**
-  - Baseline Alert Score: **0.0%**
+  - Baseline Alert Score: **4.5%**
   - Peak Closure Score Progression: `[0.164, 0.2747, 0.6112, 0.6384]`
   - Initial Cycle Peak Score: **16.4%** $\rightarrow$ Final Cycle Peak Score: **63.8%**
   - Rolling PERCLOS: **0.0%** $\rightarrow$ **29.8%**

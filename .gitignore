@@ -49,9 +49,6 @@ Thumbs.db
 ehthumbs.db
 desktop.ini
 
-# Scratch temporary testing scripts
-scratch/
-
 # Datasets (Large raw image files ~2.89 GB; documented in data/README.md)
 dataset/
 data/raw/*
@@ -59,3 +56,6 @@ data/raw/*
 
 # Logs and runtime files
 *.log
+
+# Scratch temporary testing scripts
+scratch/

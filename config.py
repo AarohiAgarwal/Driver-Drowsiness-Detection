@@ -113,7 +113,9 @@ ALERT_MUST_COMPLETE_CYCLE = True
 # Temporal Drowsiness Decision System Parameters
 # (Calibrated engineering parameters; not medical diagnostic standards)
 ROLLING_WINDOW_SIZE = 90          # Rolling frame window for temporal analysis (~3 sec at 30 fps)
+BLINK_MIN_FRAMES = 2              # Minimum consecutive closed frames to qualify as a physiological blink (~66 ms)
 BLINK_MAX_FRAMES = 6              # Maximum consecutive closed frames for a normal blink (~0.2 sec)
+BLINK_REFRACTORY_SEC = 0.15       # Minimum refractory cooldown in seconds between distinct blinks
 WARNING_CLOSED_FRAMES = 12        # Persistent eye closure frame threshold for WARNING (~0.4 sec)
 DROWSY_CLOSED_FRAMES = 24         # Persistent eye closure frame threshold for DROWSY (~0.8 sec)
 YAWN_SUSTAINED_FRAMES = 12        # Consecutive frames to register a sustained yawn event (~0.4 sec)
