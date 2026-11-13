@@ -86,7 +86,7 @@ python main.py --lang en
 
 #### Running the Streamlit Academic Dashboard:
 ```bash
-streamlit run app/app.py
+python -m streamlit run app/app.py
 ```
 Select your preferred language in the sidebar under **"Alert Language"** and click **"Test Voice Alert"** to preview.
 
