@@ -224,11 +224,26 @@ class YawnDetector:
             cnn_conf = 0.0
             prob_yawn = 0.0
 
-        mar_thresh = getattr(config, "MAR_YAWN_THRESHOLD", 0.40)
-        mar_score = float(np.clip((mar - 0.20) / (0.45 - 0.20), 0.0, 1.0))
-        fused_yawn_prob = max(prob_yawn, mar_score)
+        mar_thresh = getattr(config, "MAR_YAWN_THRESHOLD", 0.38)
+        mar_norm = float(np.clip((mar - 0.25) / (mar_thresh - 0.25), 0.0, 1.0))
 
-        is_yawning = (cnn_state == "YAWN") or (mar >= mar_thresh) or (fused_yawn_prob >= 0.50)
+        if self.is_available:
+            fused_yawn_prob = float(np.clip(0.40 * prob_yawn + 0.60 * mar_norm, 0.0, 1.0))
+        else:
+            fused_yawn_prob = mar_norm
+
+        # Physical Yawn Gate:
+        # A human cannot yawn with their mouth closed or only slightly parted (MAR < 0.28).
+        # Normal speaking and smiling produce MAR between 0.15 and 0.30.
+        # Genuine yawning requires wide mouth aperture (MAR >= 0.38) or confirmed onset (MAR >= 0.32 + high CNN).
+        if mar < 0.28:
+            is_yawning = False
+            fused_yawn_prob = min(fused_yawn_prob, 0.15)
+        else:
+            is_yawning = (mar >= mar_thresh) or \
+                         (mar >= 0.32 and cnn_state == "YAWN" and prob_yawn >= 0.65) or \
+                         (mar >= 0.34 and fused_yawn_prob >= 0.65)
+
         state = "YAWN" if is_yawning else "NO_YAWN"
         conf = (fused_yawn_prob * 100.0) if is_yawning else ((1.0 - fused_yawn_prob) * 100.0)
 

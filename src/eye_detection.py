@@ -215,17 +215,23 @@ class EyeDetector:
         # 4. Multi-Signal Fusion (Biometric EAR + Deep Learning Eye CNN)
         ear_thresh = getattr(config, "EAR_CLOSED_THRESHOLD", 0.19)
 
-        # Normalized EAR closure metrics: 0.0 (wide open) to 1.0 (fully closed)
-        left_ear_closure = float(np.clip((0.26 - left_ear) / (0.26 - 0.14), 0.0, 1.0))
-        right_ear_closure = float(np.clip((0.26 - right_ear) / (0.26 - 0.14), 0.0, 1.0))
+        # Normalized EAR closure metrics: 0.0 (wide open, EAR >= 0.24) to 1.0 (fully closed, EAR <= 0.15)
+        left_ear_closure = float(np.clip((0.24 - left_ear) / (0.24 - 0.15), 0.0, 1.0))
+        right_ear_closure = float(np.clip((0.24 - right_ear) / (0.24 - 0.15), 0.0, 1.0))
 
         # Fused closure probability (combines CNN prediction with physical eye aperture)
         left_prob = float(np.clip(0.50 * l_prob_cnn + 0.50 * left_ear_closure, 0.0, 1.0))
         right_prob = float(np.clip(0.50 * r_prob_cnn + 0.50 * right_ear_closure, 0.0, 1.0))
 
-        # Individual eye state decision (closed if EAR < threshold OR CNN says closed OR fused prob >= 0.5)
-        left_closed = (left_ear < ear_thresh) or (l_prob_cnn >= 0.5) or (left_prob >= 0.5)
-        right_closed = (right_ear < ear_thresh) or (r_prob_cnn >= 0.5) or (right_prob >= 0.5)
+        # Individual eye state decision:
+        # Physical Sanity Gate: If EAR >= 0.23, the eye aperture is clearly open and CANNOT be closed,
+        # preventing false triggers from camera shadows, glasses glare, or CNN false alarms.
+        left_closed = (left_ear < ear_thresh) or \
+                      (left_ear < 0.23 and l_prob_cnn >= 0.65) or \
+                      (left_ear < 0.22 and left_prob >= 0.60)
+        right_closed = (right_ear < ear_thresh) or \
+                       (right_ear < 0.23 and r_prob_cnn >= 0.65) or \
+                       (right_ear < 0.22 and right_prob >= 0.60)
 
         l_state = "CLOSED" if left_closed else "OPEN"
         r_state = "CLOSED" if right_closed else "OPEN"
@@ -234,8 +240,8 @@ class EyeDetector:
         l_conf = (left_prob * 100.0) if left_closed else ((1.0 - left_prob) * 100.0)
         r_conf = (right_prob * 100.0) if right_closed else ((1.0 - right_prob) * 100.0)
 
-        # Both eyes closed: both individual eyes closed OR average EAR below threshold
-        both_closed = (left_closed and right_closed) or (avg_ear < ear_thresh)
+        # Both eyes closed: requires both individual eyes closed OR average EAR below critical threshold
+        both_closed = (left_closed and right_closed) or (avg_ear < ear_thresh and (left_closed or right_closed))
 
         return {
             "detected": True,

@@ -233,19 +233,21 @@ class DrowsinessDetector:
         if both_closed:
             self.score_eye_cnn = min(1.0, max(0.5, raw_eye_prob))
         elif l_state == "CLOSED" or r_state == "CLOSED":
-            self.score_eye_cnn = 0.40  # Partial/one-eye closure
+            self.score_eye_cnn = 0.30  # Partial/one-eye closure
         else:
-            self.score_eye_cnn = max(0.0, raw_eye_prob * 0.3)
+            self.score_eye_cnn = max(0.0, (raw_eye_prob - 0.40) * 0.5) if raw_eye_prob > 0.40 else 0.0
 
         # Sub-score B: Continuous Geometric EAR
-        # Scaled between EAR=0.28 (fully alert) and EAR=0.15 (fully closed)
-        ear_clamped = np.clip(avg_ear, 0.14, 0.28)
-        self.score_ear = float((0.28 - ear_clamped) / (0.28 - 0.14))
+        # Scaled between EAR=0.23 (fully alert open eyes) and EAR=0.15 (fully closed)
+        ear_clamped = np.clip(avg_ear, 0.15, 0.23)
+        self.score_ear = float((0.23 - ear_clamped) / (0.23 - 0.15))
 
         # Sub-score C: Yawn CNN & MAR
-        mar_score = float(np.clip((mar - 0.20) / (0.45 - 0.20), 0.0, 1.0))
-        yawn_cnn_score = float(raw_yawn_prob) if is_yawn else 0.0
-        self.score_yawn = max(yawn_cnn_score, mar_score)
+        if is_yawn:
+            mar_score = float(np.clip((mar - 0.30) / (0.45 - 0.30), 0.0, 1.0))
+            self.score_yawn = max(float(raw_yawn_prob), mar_score)
+        else:
+            self.score_yawn = 0.0
 
         # Sub-score D: Temporal Duration & PERCLOS (Percentage of Eye Closure & Yawning)
         if len(self.history) > 0:

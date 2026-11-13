@@ -4,7 +4,7 @@
         "expected_state": "ALERT",
         "time_in_alert_pct": 100.0,
         "false_alarms": 0,
-        "avg_drowsiness_score": 0.038391270437516965,
+        "avg_drowsiness_score": 0.007452068056564556,
         "peak_drowsiness_score": 0.16401704545454543,
         "blinks_recorded": 1,
         "status": "PASS"
@@ -32,7 +32,7 @@
         "status": "PASS"
     },
     "scenario_4_repeated_closure": {
-        "baseline_score": 0.0449571428571429,
+        "baseline_score": 0.0,
         "initial_cycle_peak_score": 0.16401704545454543,
         "final_cycle_peak_score": 0.6383982067510547,
         "baseline_perclos_pct": 0.0,
@@ -44,10 +44,10 @@
             0.6384
         ],
         "end_score_progression": [
-            0.0511,
-            0.0575,
-            0.064,
-            0.071
+            0.0061,
+            0.0125,
+            0.019,
+            0.026
         ],
         "score_increased": true,
         "status": "PASS"
@@ -125,11 +125,11 @@
     },
     "latency_and_throughput": {
         "iterations": 30,
-        "face_detection_ms": 23.272776666787347,
-        "eye_inference_ms": 16.377639999973326,
-        "mouth_inference_ms": 7.5178833332453605,
-        "temporal_engine_ms": 0.08927333325724855,
-        "total_latency_ms": 47.259130000202276,
-        "average_fps": 21.159932482796865
+        "face_detection_ms": 20.594346666560643,
+        "eye_inference_ms": 13.888396666728417,
+        "mouth_inference_ms": 6.504663333301626,
+        "temporal_engine_ms": 0.07126666663073895,
+        "total_latency_ms": 41.06001333329914,
+        "average_fps": 24.354595111371115
     }
 }
